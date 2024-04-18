@@ -2,7 +2,6 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from ..database.models import User
-from pydantic import BaseModel, EmailStr
 from ..serializers.users import UserCreate
 
 
