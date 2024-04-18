@@ -32,7 +32,7 @@ class PostRepository:
             db.commit()
             db.refresh(db_post)
 
-        except Exception:
+        except IntegrityError:
             db.rollback()
             raise HTTPException(status_code=400, detail="Integrity error")
 
