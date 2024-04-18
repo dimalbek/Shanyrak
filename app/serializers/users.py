@@ -13,3 +13,11 @@ class UserCreate(BaseModel):
 class UserLogin(BaseModel):
     username: EmailStr
     password: str
+
+
+class UserUpdate(BaseModel):
+    username: EmailStr = None
+    phone: PhoneNumber = None
+    password: str = None
+    name: str = None
+    city: str = None
