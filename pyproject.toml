@@ -17,6 +17,7 @@ python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 attrs = "^23.2.0"
 pydantic-extra-types = "^2.6.0"
 phonenumbers = "^8.13.34"
+python-multipart = "^0.0.9"
 
 
 [build-system]
