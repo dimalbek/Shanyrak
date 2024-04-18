@@ -35,11 +35,9 @@ class UsersRepository:
     def get_user_by_username(self, db: Session, user_data: UserLogin) -> User:
         db_user = db.query(User).filter(
             User.username == user_data.username).first()
-
-        if db_user is None:
+        if not db_user:
             print(f"User with username {user_data.username} not found")
             raise HTTPException(status_code=404, detail="User not found")
-
         return db_user
 
     def update_user(self, db: Session, user_id: int, user_data: UserUpdate):
@@ -57,3 +55,9 @@ class UsersRepository:
         except IntegrityError:
             db.rollback()
             raise HTTPException(status_code=400, detail="Invalid user data")
+
+    def get_by_id(self, db: Session, user_id: int) -> User:
+        db_user = db.query(User).filter(User.id == user_id).first()
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+        return db_user
