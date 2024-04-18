@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from ..database.models import Comment, Post, User
-from ..serializers.comments import CommentCreate, CommentInfoList
+from ..serializers.comments import CommentCreate
 
 
 class CommentRepository:
