@@ -77,16 +77,19 @@ def post_comment(
         status_code=200,
     )
 
+
 # get comments
 @router.get("/{id}/comments", response_model=CommentInfoList)
 def get_comment(id: int, db: Session = Depends(get_db)):
     comments = comments_repository.get_comment_by_post_id(db, id)
     comments_list = []
     for com in comments:
-        comments_list.append(CommentInfo(
-            id=com.id,
-            content=com.content,
-            created_at=com.created_at,
-            author_id=com.author_id,
-        ))
+        comments_list.append(
+            CommentInfo(
+                id=com.id,
+                content=com.content,
+                created_at=com.created_at,
+                author_id=com.author_id,
+            )
+        )
     return CommentInfoList(comments=comments_list)
