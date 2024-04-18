@@ -46,7 +46,9 @@ class UsersRepository:
         if db_user is None:
             raise HTTPException(status_code=404, detail="User not found")
         else:
-            for field, value in user_data.model_dump(exclude_unset=True).items():
+            for field, value in user_data.model_dump(
+                exclude_unset=True
+            ).items():
                 setattr(db_user, field, value)
 
         try:
