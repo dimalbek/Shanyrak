@@ -37,3 +37,9 @@ class PostRepository:
             raise HTTPException(status_code=400, detail="Integrity error")
 
         return db_post.id
+
+    def get_post_by_id(self, db: Session, post_id: int):
+        db_post = db.query(Post).filter(Post.id == post_id).first()
+        if not db_post:
+            raise HTTPException(status_code=404, detail="Post not found")
+        return db_post
