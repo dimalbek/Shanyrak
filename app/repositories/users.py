@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from ..database.models import User
-from ..serializers.users import UserCreate
+from ..serializers.users import UserCreate, UserLogin
 
 
 class UsersRepository:
@@ -10,13 +10,11 @@ class UsersRepository:
         try:
             # Check if the user already exists
             existing_user = db.query(User).filter(
-                User.username == user_data.username
-            ).first()
+                    User.username == user_data.username
+                ).first()
 
             if existing_user:
-                raise HTTPException(
-                    status_code=400, detail="User already exists"
-                )
+                raise HTTPException(status_code=400, detail="User already exists")
 
             new_user = User(
                 username=user_data.username,
@@ -33,3 +31,14 @@ class UsersRepository:
             db.rollback()
             raise HTTPException(status_code=400, detail="User already exists")
         return new_user
+
+    def get_user_by_username(self, db: Session, user_data: UserLogin) -> User:
+        db_user = db.query(User).filter(
+            User.username == user_data.username
+        ).first()
+
+        if db_user is None:
+            print(f"User with username {user_data.username} not found")
+            raise HTTPException(status_code=404, detail="User not found")
+
+        return db_user
