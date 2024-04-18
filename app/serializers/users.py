@@ -21,3 +21,11 @@ class UserUpdate(BaseModel):
     password: str = None
     name: str = None
     city: str = None
+
+
+class UserInfo(BaseModel):
+    id: int
+    username: EmailStr
+    phone: str
+    name: str
+    city: str
