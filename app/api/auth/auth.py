@@ -1,14 +1,16 @@
-from fastapi import APIRouter, Depends, Form, Request, Response, HTTPException
+from fastapi import APIRouter, Depends, Request, Response, HTTPException, Form
+from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
 from ...repositories.users import UsersRepository
-from ...serializers.users import UserCreate, UserLogin
+from ...serializers.users import UserCreate, UserLogin, UserUpdate
 from ...database.database import get_db
 from sqlalchemy.orm import Session
-
+from pydantic import EmailStr
 
 router = APIRouter()
 users_repository = UsersRepository()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/users/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -48,10 +50,14 @@ def post_signup(
 # login
 @router.post("/users/login")
 def post_login(
-    user_input: UserLogin, db: Session = Depends(get_db)
+    # user_input: UserLogin,
+    username: EmailStr = Form(),
+    password: str = Form(),
+    db: Session = Depends(get_db),
 ):
-    user = users_repository.get_user_by_username(db, user_input)
-    if not verify_password(user_input.password, user.password):
+    user_data = UserLogin(username=username, password=password)
+    user = users_repository.get_user_by_username(db, user_data)
+    if not verify_password(password, user.password):
         raise HTTPException(
             status_code=401,
             detail="Incorrect password",
@@ -60,3 +66,18 @@ def post_login(
 
     access_token = create_jwt(user.id)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+# update user
+@router.patch("/users/me")
+def patch_user(
+    user_input: UserUpdate,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    user_id = decode_jwt(token)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid user or token")
+    user_input.password = hash_password(user_input.password)
+    users_repository.update_user(db, user_id, user_input)
+    return Response(content="User updated successfully", status_code=200)
