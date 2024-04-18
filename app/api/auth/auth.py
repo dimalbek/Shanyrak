@@ -33,7 +33,7 @@ def decode_jwt(token: str) -> int:
 
 
 # registration
-@router.post("/signup")
+@router.post("users")
 def post_signup(
     user_input: UserCreate,
     db: Session = Depends(get_db),
@@ -46,7 +46,7 @@ def post_signup(
 
 
 # login
-@router.post("/login")
+@router.post("users/login")
 def post_login(
     user_input: UserLogin, db: Session = Depends(get_db)
 ):
