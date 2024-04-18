@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request, Response, HTTPException, Form
+from fastapi import APIRouter, Depends, Response, HTTPException, Form
 from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
@@ -85,7 +85,9 @@ def patch_user(
 
 # get user info
 @router.get("/users/me", response_model=UserInfo)
-def get_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     user_id = decode_jwt(token)
     user = users_repository.get_by_id(db, user_id)
     user.phone = user.phone.replace("-", " ")
