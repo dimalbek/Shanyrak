@@ -2,12 +2,11 @@ from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from ..database.models import Post
-from ..serializers.posts import PostCreate
+from ..serializers.posts import PostCreate, PostUpdate
 
 
 class PostRepository:
-    @staticmethod
-    def create_post(db: Session, user_id: int, post_data: PostCreate):
+    def create_post(self, db: Session, user_id: int, post_data: PostCreate):
         try:
             existing_post = (
                 db.query(Post)
@@ -25,7 +24,8 @@ class PostRepository:
 
             if existing_post:
                 raise HTTPException(
-                    status_code=400, detail="Following post already exists")
+                    status_code=400, detail="Following post already exists"
+                )
 
             db_post = Post(**post_data.model_dump(), user_id=user_id)
             db.add(db_post)
@@ -42,4 +42,35 @@ class PostRepository:
         db_post = db.query(Post).filter(Post.id == post_id).first()
         if not db_post:
             raise HTTPException(status_code=404, detail="Post not found")
+        return db_post
+
+    def update_post(
+        self, db: Session, post_id: int, user_id: int, post_data: PostUpdate
+    ):
+        db_post = db.query(Post).filter(Post.id == post_id).first()
+
+        if not db_post:
+            raise HTTPException(status_code=404, detail="Post not found")
+        if db_post.user_id != user_id:
+            raise HTTPException(status_code=403, detail="Forbidden")
+
+        for field, value in post_data.model_dump(exclude_unset=True).items():
+            setattr(db_post, field, value)
+
+        try:
+            db.commit()
+            db.refresh(db_post)
+        except IntegrityError:
+            db.rollback()
+            raise HTTPException(status_code=400, detail="Integrity Error")
+
+    def delete_post(self, db: Session, post_id: int, user_id: int):
+        db_post = db.query(Post).filter(Post.id == post_id).first()
+        if not db_post:
+            raise HTTPException(status_code=404, detail="Post not found")
+        if db_post.user_id != user_id:
+            raise HTTPException(status_code=403, detail="Forbidden")
+
+        db.delete(db_post)
+        db.commit()
         return db_post
