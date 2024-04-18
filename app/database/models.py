@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, String, Float, ForeignKey, Text
 from .database import Base
 from sqlalchemy.orm import relationship
 
+
 class User(Base):
     __tablename__ = "users"
 
@@ -19,13 +20,12 @@ class Post(Base):
     __tablename__ = "posts"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
     type = Column(String, index=True, nullable=False)
     price = Column(Integer, nullable=False)
     address = Column(String, index=True, nullable=False)
     area = Column(Float, nullable=False)
     rooms_count = Column(Integer, nullable=False)
     description = Column(Text, nullable=False)
-
-    user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", back_populates="posts")
