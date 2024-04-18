@@ -29,7 +29,7 @@ class UsersRepository:
             db.refresh(new_user)
         except IntegrityError:
             db.rollback()
-            raise HTTPException(status_code=400, detail="User already exists")
+            raise HTTPException(status_code=400, detail="Integrity error")
         return new_user
 
     def get_user_by_username(self, db: Session, user_data: UserLogin) -> User:
