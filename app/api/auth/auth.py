@@ -83,7 +83,7 @@ def patch_user(
     return Response(content="User updated successfully", status_code=200)
 
 # get user info
-@router.get("/users/me")
+@router.get("/users/me", response_model=UserInfo)
 def get_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
@@ -97,3 +97,4 @@ def get_user(
         name=user.name,
         city=user.city,
     )
+
