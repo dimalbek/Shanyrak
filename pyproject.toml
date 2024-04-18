@@ -18,6 +18,7 @@ attrs = "^23.2.0"
 pydantic-extra-types = "^2.6.0"
 phonenumbers = "^8.13.34"
 python-multipart = "^0.0.9"
+datetime = "^5.5"
 
 
 [build-system]
