@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
 from ...repositories.users import UsersRepository
-from ...serializers.users import UserCreate, UserLogin, UserUpdate
+from ...serializers.users import UserCreate, UserLogin, UserUpdate, UserInfo
 from ...database.database import get_db
 from sqlalchemy.orm import Session
 from pydantic import EmailStr
@@ -81,3 +81,19 @@ def patch_user(
     user_input.password = hash_password(user_input.password)
     users_repository.update_user(db, user_id, user_input)
     return Response(content="User updated successfully", status_code=200)
+
+# get user info
+@router.get("/users/me")
+def get_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    user_id = decode_jwt(token)
+    user = users_repository.get_by_id(db, user_id)
+    user.phone = user.phone.replace("-", " ")
+    return UserInfo(
+        id=user_id,
+        username=user.username,
+        phone=user.phone[4:],
+        name=user.name,
+        city=user.city,
+    )
