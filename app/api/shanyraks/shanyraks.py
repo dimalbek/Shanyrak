@@ -110,3 +110,19 @@ def patch_comment(
         content=f"Comment with id {comment_id} on post with {id} updated",
         status_code=200
     )
+
+
+# delete comment
+@router.delete("/{id}/comments/{comment_id}")
+def delete_comment(
+    id: int,
+    comment_id: int,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    user_id = decode_jwt(token)
+    comments_repository.delete_comment(db, user_id, id, comment_id)
+    return Response(
+        content=f"Comment with id {comment_id} on post with {id} deleted",
+        status_code=200
+    )
