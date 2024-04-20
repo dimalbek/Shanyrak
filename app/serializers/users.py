@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
+from typing import List
 
 
 class UserCreate(BaseModel):
@@ -29,3 +30,12 @@ class UserInfo(BaseModel):
     phone: str
     name: str
     city: str
+
+
+class FavoriteInfo(BaseModel):
+    id: int
+    address: str
+
+
+class FavoritesList(BaseModel):
+    shanyraks: List[FavoriteInfo]
