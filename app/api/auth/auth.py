@@ -76,8 +76,8 @@ def patch_user(
     db: Session = Depends(get_db),
 ):
     user_id = decode_jwt(token)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Invalid user or token")
+    # if not user_id:
+    #     raise HTTPException(status_code=401, detail="Unauthorized")
     user_input.password = hash_password(user_input.password)
     users_repository.update_user(db, user_id, user_input)
     return Response(content="User updated successfully", status_code=200)
@@ -89,6 +89,8 @@ def get_user(
     token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
 ):
     user_id = decode_jwt(token)
+    # if not user_id:
+    #     raise HTTPException(status_code=401, detail="Unauthorized")
     user = users_repository.get_by_id(db, user_id)
     user.phone = user.phone.replace("-", " ")
     return UserInfo(

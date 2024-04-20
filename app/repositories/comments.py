@@ -105,7 +105,7 @@ class CommentRepository:
         if not db_comment:
             raise HTTPException(status_code=404, detail="Comment not found")
 
-        if db_comment.author_id != user_id:
+        if db_comment.author_id != user_id and db_post.user_id != user_id:
             raise HTTPException(status_code=403, detail="Forbidden")
 
         try:
