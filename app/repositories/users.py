@@ -5,6 +5,7 @@ from ..database.models import User, Post
 from ..serializers.users import UserCreate, UserLogin, UserUpdate, FavoriteInfo
 from typing import List
 
+
 class UsersRepository:
     def create_user(self, db: Session, user_data: UserCreate) -> User:
         try:
@@ -30,7 +31,8 @@ class UsersRepository:
 
         except IntegrityError as e:
             db.rollback()
-            raise HTTPException(status_code=400, detail=f"Integrity error: {str(e)}")
+            raise HTTPException(status_code=400,
+                                detail=f"Integrity error: {str(e)}")
         return new_user
 
     def get_user_by_username(self, db: Session, user_data: UserLogin) -> User:
@@ -85,18 +87,29 @@ class UsersRepository:
             db.rollback()
             raise HTTPException(status_code=500, detail=str(e))
 
-    def get_favorites(
-        self, db: Session, user_id: int
-    ) -> List[FavoriteInfo]:
+    def get_favorites(self, db: Session, user_id: int) -> List[FavoriteInfo]:
         db_user = db.query(User).filter(User.id == user_id).first()
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
 
         spliited_favs = db_user.favorites.split(",")
         favs_list = []
-        for id in spliited_favs:
-            db_post = db.query(Post).filter(Post.id == id).first()
+        for post_id in spliited_favs:
+            db_post = db.query(Post).filter(Post.id == post_id).first()
             if not db_post:
                 continue
-            favs_list.append(FavoriteInfo(id=id, address=db_post.address))
+            favs_list.append(FavoriteInfo(id=post_id, address=db_post.address))
         return favs_list
+
+    def delete_from_favorites(self, db: Session, user_id: int, post_id: int):
+        db_user = db.query(User).filter(User.id == user_id).first()
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if str(post_id) not in db_user.favorites:
+            raise HTTPException(status_code=404,
+                                detail="Post not in favorites")
+
+        db_user.favorites = db_user.favorites.replace(f"{post_id},", "")
+        db.commit()
+        db.refresh(db_user)
