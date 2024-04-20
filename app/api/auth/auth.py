@@ -91,7 +91,10 @@ def patch_user(
 
 # get user info
 @router.get("/users/me", response_model=UserInfo)
-def get_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_user(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
     user_id = decode_jwt(token)
     # if not user_id:
     #     raise HTTPException(status_code=401, detail="Unauthorized")
@@ -118,7 +121,8 @@ def add_to_favorites(
 ):
     user_id = decode_jwt(token)
     users_repository.add_to_favorites(db, user_id, id)
-    return Response(content=f"Post with id {id} added to favorites", status_code=200)
+    return Response(content=f"Post with id {id} added to favorites",
+                    status_code=200)
 
 
 # get favs
@@ -129,3 +133,16 @@ def get_favorites(
     user_id = decode_jwt(token)
     shanyraks_list = users_repository.get_favorites(db, user_id)
     return FavoritesList(shanyraks=shanyraks_list)
+
+
+# delete from favs
+@router.delete("/users/favorites/shanyraks/{id}")
+def delete_favorite(
+    id: int,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db)
+):
+    user_id = decode_jwt(token)
+    users_repository.delete_from_favorites(db, user_id, id)
+    return Response(content=f"Post with id {id} deleted from favorites",
+                    status_code=200)
