@@ -32,8 +32,9 @@ def post_post(
 # get shanyrak
 @router.get("/{id}", response_model=PostInfo)
 def get_post(id: int, db: Session = Depends(get_db)):
-    db_post = post_repository.get_post_by_id(db, id)
-    return db_post
+    db_post, total_comments = post_repository.get_post_by_id(db, id)
+    post_info = PostInfo(**db_post.__dict__, total_comments=total_comments)
+    return post_info
 
 
 # update shanyrak

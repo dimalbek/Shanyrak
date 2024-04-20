@@ -19,6 +19,7 @@ class PostInfo(BaseModel):
     rooms_count: int
     description: str
     user_id: int
+    total_comments: int
 
 
 class PostUpdate(BaseModel):
