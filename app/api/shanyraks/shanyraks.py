@@ -1,12 +1,19 @@
 from fastapi import APIRouter, Depends, Response
 from fastapi.security import OAuth2PasswordBearer
 from ...repositories.posts import PostRepository
-from ...serializers.posts import PostCreate, PostInfo, PostUpdate
+from ...serializers.posts import (
+    PostCreate,
+    PostInfo,
+    PostUpdate,
+    SearchShanyrak,
+    SearchShanyrakList,
+)
 from ...repositories.comments import CommentRepository
 from ...serializers.comments import CommentCreate, CommentInfo, CommentInfoList
 from ...database.database import get_db
 from sqlalchemy.orm import Session
 from ..auth.auth import decode_jwt
+
 
 router = APIRouter()
 post_repository = PostRepository()
@@ -74,8 +81,8 @@ def post_comment(
     user_id = decode_jwt(token)
     comment = comments_repository.create_comment(db, user_id, id, comment)
     return Response(
-        content=f"Comment with id {comment.id} created to post with id {id}",
         status_code=200,
+        content=f"Comment with id {comment.id} created to post with id {id}",
     )
 
 
@@ -108,8 +115,8 @@ def patch_comment(
     user_id = decode_jwt(token)
     comments_repository.update_comment(db, user_id, id, comment_id, content)
     return Response(
+        status_code=200,
         content=f"Comment with id {comment_id} on post with {id} updated",
-        status_code=200
     )
 
 
@@ -124,6 +131,31 @@ def delete_comment(
     user_id = decode_jwt(token)
     comments_repository.delete_comment(db, user_id, id, comment_id)
     return Response(
+        status_code=200,
         content=f"Comment with id {comment_id} on post with {id} deleted",
-        status_code=200
+    )
+
+
+# search & pagination
+@router.get("/", response_model=SearchShanyrakList)
+def search_posts(
+    db: Session = Depends(get_db),
+    limit: int = 5,
+    offset: int = 0,
+    type: str = "default",
+    rooms_count: int = -1,
+    price_from: int = 0,
+    price_until: int = -1,
+):
+    posts, total_count = post_repository.get_posts(
+        db, limit, offset, type, rooms_count, price_from, price_until
+    )
+    posts_list_formatted = []
+    for post in posts:
+        posts_list_formatted.append(
+            SearchShanyrak.model_validate(post.__dict__)
+        )
+    return SearchShanyrakList(
+        total=total_count,
+        objects=posts_list_formatted,
     )
