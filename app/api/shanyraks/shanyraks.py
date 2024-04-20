@@ -93,3 +93,20 @@ def get_comment(id: int, db: Session = Depends(get_db)):
             )
         )
     return CommentInfoList(comments=comments_list)
+
+
+# update comment
+@router.patch("/{id}/comments/{comment_id}")
+def patch_comment(
+    content: str,
+    id: int,
+    comment_id: int,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    user_id = decode_jwt(token)
+    comments_repository.update_comment(db, user_id, id, comment_id, content)
+    return Response(
+        content=f"Comment with id {comment_id} on post with {id} updated",
+        status_code=200
+    )
