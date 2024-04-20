@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from ..database.models import Post
+from ..database.models import Post, Comment
 from ..serializers.posts import PostCreate, PostUpdate
 
 
@@ -42,7 +42,14 @@ class PostRepository:
         db_post = db.query(Post).filter(Post.id == post_id).first()
         if not db_post:
             raise HTTPException(status_code=404, detail="Post not found")
-        return db_post
+        db_comments = db.query(Comment).filter(
+            Comment.post_id == post_id
+        ).all()
+
+        if not db_comments:
+            return db_post, 0
+        total_comments = len(db_comments)
+        return db_post, total_comments
 
     def update_post(
         self, db: Session, post_id: int, user_id: int, post_data: PostUpdate
