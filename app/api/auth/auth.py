@@ -3,7 +3,13 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt
 from passlib.context import CryptContext
 from ...repositories.users import UsersRepository
-from ...serializers.users import UserCreate, UserLogin, UserUpdate, UserInfo
+from ...serializers.users import (
+    UserCreate,
+    UserLogin,
+    UserUpdate,
+    UserInfo,
+    FavoritesList,
+)
 from ...database.database import get_db
 from sqlalchemy.orm import Session
 from pydantic import EmailStr
@@ -85,9 +91,7 @@ def patch_user(
 
 # get user info
 @router.get("/users/me", response_model=UserInfo)
-def get_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
-):
+def get_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = decode_jwt(token)
     # if not user_id:
     #     raise HTTPException(status_code=401, detail="Unauthorized")
@@ -104,7 +108,8 @@ def get_user(
 
 # Favorites
 
-# 
+
+# add to favs
 @router.post("/users/favorites/shanyraks/{id}")
 def add_to_favorites(
     id: int,
@@ -113,5 +118,14 @@ def add_to_favorites(
 ):
     user_id = decode_jwt(token)
     users_repository.add_to_favorites(db, user_id, id)
-    return Response(content=f"Post with id {id} added to favorites",
-                    status_code=200)
+    return Response(content=f"Post with id {id} added to favorites", status_code=200)
+
+
+# get favs
+@router.get("/users/favorites/shanyraks", response_model=FavoritesList)
+def get_favorites(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
+    user_id = decode_jwt(token)
+    shanyraks_list = users_repository.get_favorites(db, user_id)
+    return FavoritesList(shanyraks=shanyraks_list)
