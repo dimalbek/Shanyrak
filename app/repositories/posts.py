@@ -42,7 +42,9 @@ class PostRepository:
         db_post = db.query(Post).filter(Post.id == post_id).first()
         if not db_post:
             raise HTTPException(status_code=404, detail="Post not found")
-        db_comments = db.query(Comment).filter(Comment.post_id == post_id).all()
+        db_comments = db.query(Comment).filter(
+            Comment.post_id == post_id
+        ).all()
 
         if not db_comments:
             return db_post, 0
