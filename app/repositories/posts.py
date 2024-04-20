@@ -42,9 +42,7 @@ class PostRepository:
         db_post = db.query(Post).filter(Post.id == post_id).first()
         if not db_post:
             raise HTTPException(status_code=404, detail="Post not found")
-        db_comments = db.query(Comment).filter(
-            Comment.post_id == post_id
-        ).all()
+        db_comments = db.query(Comment).filter(Comment.post_id == post_id).all()
 
         if not db_comments:
             return db_post, 0
@@ -81,3 +79,27 @@ class PostRepository:
         db.delete(db_post)
         db.commit()
         return db_post
+
+    def get_posts(
+        self,
+        db: Session,
+        limit: int,
+        offset: int,
+        type: str,
+        rooms_count: int,
+        price_from: int,
+        price_until: int,
+    ):
+        db_posts = db.query(Post)
+        if type != "default":
+            db_posts = db_posts.filter(Post.type == type)
+        if rooms_count != -1:
+            db_posts = db_posts.filter(Post.rooms_count == rooms_count)
+        if price_until != -1:
+            db_posts = db_posts.filter(Post.price <= price_until)
+        db_posts = db_posts.filter(Post.price >= price_from)
+
+        total_count = db_posts.count()
+        db_posts = db_posts.limit(limit).offset(offset).all()
+
+        return db_posts, total_count

@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-
+from typing import List
 
 class PostCreate(BaseModel):
     type: str
@@ -29,3 +29,17 @@ class PostUpdate(BaseModel):
     area: float = None
     rooms_count: int = None
     description: str = None
+
+
+class SearchShanyrak(BaseModel):
+    id: int
+    type: str
+    price: int
+    address: str
+    area: float
+    rooms_count: int
+
+
+class SearchShanyrakList(BaseModel):
+    total: int
+    objects: List[SearchShanyrak]
