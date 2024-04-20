@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-from ..database.models import User
+from ..database.models import User, Post
 from ..serializers.users import UserCreate, UserLogin, UserUpdate
 
 
@@ -27,9 +27,10 @@ class UsersRepository:
             db.add(new_user)
             db.commit()
             db.refresh(new_user)
-        except IntegrityError:
+
+        except IntegrityError as e:
             db.rollback()
-            raise HTTPException(status_code=400, detail="Integrity error")
+            raise HTTPException(status_code=400, detail=f"Integrity error: {str(e)}")
         return new_user
 
     def get_user_by_username(self, db: Session, user_data: UserLogin) -> User:
@@ -60,3 +61,26 @@ class UsersRepository:
         if not db_user:
             raise HTTPException(status_code=404, detail="User not found")
         return db_user
+
+    def add_to_favorites(self, db: Session, user_id: int, post_id: int):
+        db_user = db.query(User).filter(User.id == user_id).first()
+        if not db_user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        db_post = db.query(Post).filter(Post.id == post_id).first()
+        if not db_post:
+            raise HTTPException(status_code=404, detail="Post not found")
+
+        if db_user.favorites is None:
+            db_user.favorites = ""
+
+        if str(post_id) in db_user.favorites:
+            raise HTTPException(status_code=400,
+                                detail="Post already in favorites")
+        try:
+            db_user.favorites += f"{post_id}, "
+            db.commit()
+            db.refresh(db_user)
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=500, detail=str(e))
