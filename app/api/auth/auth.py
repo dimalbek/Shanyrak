@@ -100,3 +100,18 @@ def get_user(
         name=user.name,
         city=user.city,
     )
+
+
+# Favorites
+
+# 
+@router.post("/users/favorites/shanyraks/{id}")
+def add_to_favorites(
+    id: int,
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+):
+    user_id = decode_jwt(token)
+    users_repository.add_to_favorites(db, user_id, id)
+    return Response(content=f"Post with id {id} added to favorites",
+                    status_code=200)
