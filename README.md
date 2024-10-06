@@ -1,9 +1,9 @@
-#Project Overview
+# **Project Overview**
 
 Shanyrak is a dynamic real estate marketplace that connects property owners and seekers in Kazakhstan. The platform allows users to create, modify, and delete property listings, along with the ability to add and manage comments. This Minimum Viable Product (MVP) focuses on essential features like user registration, property management, and commenting functionality.
 
 
-#Features
+# **Features**
 
 User Registration: Users can register on the platform by providing essential details like email, phone number, password, name, and city.
 
@@ -22,7 +22,7 @@ Comment Management: Users can modify and delete their comments on property listi
 API Endpoints: The project exposes various API endpoints for user registration, authentication, property listing management, and commenting.
 
 
-#Technology Stack
+# **Technology Stack**
 
 FastAPI: A modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints.
 
@@ -31,7 +31,7 @@ SQLAlchemy: A powerful and flexible SQL toolkit and Object-Relational Mapping (O
 Alembic: A lightweight database migration tool for usage with SQLAlchemy.
 
 
-#Installation
+# **Installation**
 Clone the Repository:
 ```
 git clone https://github.com/dimalbek/Shanyrak.git
@@ -63,7 +63,7 @@ The API will now be accessible at http://127.0.0.1:8000 .
 You may check endpoints at http://127.0.0.1:8000/docs .
 
 
-#API Endpoints
+# **API Endpoints**
 
 User Authentication
 
@@ -88,5 +88,5 @@ GET /shanyraks/{id}/comments: Retrieve comments for a property listing.
 PATCH /shanyraks/{id}/comments/{comment_id}: Modify a comment on a property listing.
 DELETE /shanyraks/{id}/comments/{comment_id}: Delete a comment on a property listing.
 
-Author
+## **Author**
 Developed by Dinmukhamed Albek.
