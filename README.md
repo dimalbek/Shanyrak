@@ -31,8 +31,8 @@ Alembic: A lightweight database migration tool for usage with SQLAlchemy.
 Installation
 Clone the Repository:
 ```
-https://github.com/dimalbek/ZenithChat.git
-cd ZenithChat
+git clone https://github.com/dimalbek/Shanyrak.git
+cd Shanyrak
 ```
 
 Set up a Virtual Environment (optional but recommended):
