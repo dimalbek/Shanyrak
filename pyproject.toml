@@ -19,6 +19,9 @@ pydantic-extra-types = "^2.6.0"
 phonenumbers = "^8.13.34"
 python-multipart = "^0.0.9"
 datetime = "^5.5"
+load-dotenv = "^0.1.0"
+bcrypt = "^4.3.0"
+requests = "^2.32.3"
 
 
 [build-system]
