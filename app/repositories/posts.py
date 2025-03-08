@@ -1,8 +1,9 @@
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from typing import Optional
 from ..database.models import Post, Comment
-from ..serializers.posts import PostCreate, PostUpdate
+from ..schemas.posts import PostCreate, PostUpdate
 
 
 class PostRepository:
@@ -87,21 +88,20 @@ class PostRepository:
         db: Session,
         limit: int,
         offset: int,
-        type: str,
-        rooms_count: int,
+        type: Optional[str],
+        rooms_count: Optional[int],
         price_from: int,
-        price_until: int,
+        price_until: Optional[int],
     ):
         db_posts = db.query(Post)
-        if type != "default":
+        if type:
             db_posts = db_posts.filter(Post.type == type)
-        if rooms_count != -1:
+        if rooms_count is not None:
             db_posts = db_posts.filter(Post.rooms_count == rooms_count)
-        if price_until != -1:
+        if price_until is not None:
             db_posts = db_posts.filter(Post.price <= price_until)
         db_posts = db_posts.filter(Post.price >= price_from)
-
         total_count = db_posts.count()
         db_posts = db_posts.limit(limit).offset(offset).all()
-
         return db_posts, total_count
+

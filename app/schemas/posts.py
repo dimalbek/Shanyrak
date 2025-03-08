@@ -1,9 +1,16 @@
 from pydantic import BaseModel
 from typing import List
+from pydantic import BaseModel
+import enum
+
+
+class PostType(str, enum.Enum):
+    rent = "rent"
+    buy = "buy"
 
 
 class PostCreate(BaseModel):
-    type: str
+    type: PostType
     price: int
     address: str
     area: float

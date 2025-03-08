@@ -1,3 +1,4 @@
+import enum
 from sqlalchemy import (
     Column,
     Integer,
@@ -6,11 +7,17 @@ from sqlalchemy import (
     ForeignKey,
     Text,
     DateTime,
+    Enum as SQLAlchemyEnum,
 )
 from .database import Base
 from sqlalchemy.orm import relationship
 import pytz
 from datetime import datetime
+
+
+class PostType(enum.Enum):
+    rent = "rent"
+    buy = "buy"
 
 
 class User(Base):
@@ -33,7 +40,7 @@ class Post(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    type = Column(String, index=True, nullable=False)
+    type = Column(SQLAlchemyEnum(PostType), index=True, nullable=False)
     price = Column(Integer, nullable=False)
     address = Column(String, index=True, nullable=False)
     area = Column(Float, nullable=False)
@@ -49,11 +56,9 @@ class Comment(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.now(
-        pytz.timezone('Asia/Almaty')))
-
-    author_id = Column(Integer, ForeignKey('users.id'))
-    post_id = Column(Integer, ForeignKey('posts.id'))
+    created_at = Column(DateTime, default=datetime.now(pytz.timezone("Asia/Almaty")))
+    author_id = Column(Integer, ForeignKey("users.id"))
+    post_id = Column(Integer, ForeignKey("posts.id"))
 
     user = relationship("User", back_populates="comments")
     post = relationship("Post", back_populates="comments")
