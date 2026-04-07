@@ -146,7 +146,7 @@ def search_posts(
     db: Session = Depends(get_db),
     limit: int = Query(5, ge=1, description="Number of posts to return"),
     offset: int = Query(0, ge=0, description="Number of posts to skip"),
-    type: Optional[PostType] = Query(None, description="Post type (rent, buy, sale)"),
+    type: Optional[PostType] = Query(None, description="Post type (rent, buy)"),
     rooms_count: Optional[int] = Query(None, ge=0, description="Required number of rooms"),
     price_from: int = Query(0, ge=0, description="Minimum price"),
     price_until: Optional[int] = Query(None, ge=0, description="Maximum price"),
