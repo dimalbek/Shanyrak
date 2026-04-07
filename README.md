@@ -92,3 +92,4 @@ DELETE /shanyraks/{id}/comments/{comment_id}: Delete a comment on a property lis
 Developed by Dinmukhamed Albek.
 # test
 # test shanyrak-4
+# test shanyrak-5
