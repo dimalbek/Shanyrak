@@ -97,3 +97,4 @@ Developed by Dinmukhamed Albek.
 # test sh-tst-1
 # test sh-1
 # test sh-6
+# ai integration done
