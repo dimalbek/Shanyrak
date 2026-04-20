@@ -96,3 +96,4 @@ Developed by Dinmukhamed Albek.
 # test dimalbek-2
 # test sh-tst-1
 # test sh-1
+# test sh-6
