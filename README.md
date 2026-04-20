@@ -94,3 +94,4 @@ Developed by Dinmukhamed Albek.
 # test shanyrak-4
 # test shanyrak-5
 # test dimalbek-2
+# test sh-tst-1
